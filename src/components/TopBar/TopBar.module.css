@@ -1,0 +1,86 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.streak {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--color-orange);
+  font-size: 16px;
+}
+
+.streakIcon {
+  font-size: 20px;
+}
+
+.right {
+  position: relative;
+}
+
+.schemeButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.schemeButton:hover {
+  background: #e5e5e5;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  min-width: 140px;
+  z-index: 20;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 14px;
+  transition: background 0.1s;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.dropdownItem:hover {
+  background: var(--color-bg);
+}
+
+.dropdownItemActive {
+  font-weight: 700;
+  color: var(--color-green);
+}
