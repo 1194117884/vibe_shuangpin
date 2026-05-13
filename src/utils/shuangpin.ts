@@ -1,5 +1,5 @@
 import type { ShuangpinScheme } from '../types'
-import { xiaohe } from '../data/xiaohe'
+import { schemes } from '../data/schemes'
 
 const COMPOUND_INITIALS = ['zh', 'ch', 'sh'] as const
 const SINGLE_INITIALS = 'bpmfdtnlgkhjqxrzcsyw'
@@ -60,5 +60,5 @@ export function getShuangpinKeys(input: string, scheme: ShuangpinScheme): string
  * Get all available Shuangpin schemes.
  */
 export function getAvailableSchemes(): ShuangpinScheme[] {
-  return [xiaohe]
+  return schemes
 }
