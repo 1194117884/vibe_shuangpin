@@ -1,0 +1,161 @@
+.exerciseContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.progressSection {
+  width: 100%;
+  text-align: center;
+}
+
+.progressBar {
+  width: 100%;
+  height: 12px;
+  background: var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-green);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.promptCard {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: 40px 32px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  width: 100%;
+}
+
+.prompt {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 24px;
+  letter-spacing: 4px;
+}
+
+.inputSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.input {
+  width: 200px;
+  padding: 12px 16px;
+  font-size: 24px;
+  text-align: center;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  font-family: var(--font-sans);
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: var(--color-blue);
+}
+
+.inputCorrect {
+  border-color: var(--color-correct);
+  background: #eafbea;
+}
+
+.inputIncorrect {
+  border-color: var(--color-incorrect);
+  background: #ffeaea;
+}
+
+.hint {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.feedback {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  animation: fadeIn 0.3s ease;
+}
+
+.feedbackCorrect {
+  color: var(--color-correct);
+}
+
+.feedbackIncorrect {
+  color: var(--color-incorrect);
+}
+
+.completionCard {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: 48px 32px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  width: 100%;
+}
+
+.completionTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-green);
+  margin-bottom: 16px;
+}
+
+.completionStats {
+  font-size: 18px;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+}
+
+.continueButton {
+  background: var(--color-green);
+  color: white;
+  padding: 14px 48px;
+  border-radius: var(--radius-md);
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 4px 0 var(--color-green-hover);
+  transition: transform 0.05s, box-shadow 0.05s;
+  cursor: pointer;
+}
+
+.continueButton:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .prompt {
+    font-size: 36px;
+  }
+  .promptCard {
+    padding: 24px 16px;
+  }
+}
