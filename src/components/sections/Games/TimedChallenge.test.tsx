@@ -22,7 +22,7 @@ describe('TimedChallenge', () => {
     expect(screen.getByLabelText('输入双拼编码')).toBeInTheDocument()
   })
 
-  it('calls onComplete when time runs out', () => {
+  it('shows result screen and completes when time runs out', () => {
     vi.useFakeTimers()
     const onComplete = vi.fn()
     render(<TimedChallenge scheme={xiaohe} onComplete={onComplete} onBack={vi.fn()} />)
@@ -30,7 +30,10 @@ describe('TimedChallenge', () => {
     act(() => {
       vi.advanceTimersByTime(61000)
     })
-    expect(onComplete).toHaveBeenCalled()
+    expect(screen.getByText('时间到!')).toBeInTheDocument()
+    expect(screen.getByText(/得分: 0/)).toBeInTheDocument()
+    fireEvent.click(screen.getByText('完成'))
+    expect(onComplete).toHaveBeenCalledWith(0)
     vi.useRealTimers()
   })
 })

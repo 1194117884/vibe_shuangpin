@@ -22,31 +22,25 @@ export function TimedChallenge({ scheme, onComplete, onBack }: TimedChallengePro
     [],
   )
 
-  // Pick a random batch of exercises each round (must be before early returns)
-  const shuffled = useMemo(
-    () => [...allExercises].sort(() => Math.random() - 0.5).slice(0, 10),
-    [timeLeft],
+  // Pick a random batch once on mount
+  const [shuffled] = useState(() =>
+    [...allExercises].sort(() => Math.random() - 0.5).slice(0, 10),
   )
 
   const handleStart = useCallback(() => {
     setStarted(true)
     timerRef.current = setInterval(() => {
-      setTimeLeft(t => {
-        if (t <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current)
-          return 0
-        }
-        return t - 1
-      })
+      setTimeLeft(t => t - 1)
     }, 1000)
   }, [])
 
-  // Auto-complete when time runs out
+  // Stop the timer when it reaches 0
   useEffect(() => {
-    if (started && timeLeft <= 0) {
-      onComplete(score)
+    if (started && timeLeft <= 0 && timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
     }
-  }, [timeLeft, started, onComplete, score])
+  }, [started, timeLeft])
 
   useEffect(() => {
     return () => {
@@ -74,6 +68,9 @@ export function TimedChallenge({ scheme, onComplete, onBack }: TimedChallengePro
       <div className={styles.resultScreen}>
         <h2 className={styles.resultTitle}>时间到!</h2>
         <p className={styles.resultScore}>得分: {score}</p>
+        <button className={styles.startButton} onClick={() => onComplete(score)}>
+          完成
+        </button>
       </div>
     )
   }
