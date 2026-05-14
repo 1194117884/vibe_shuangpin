@@ -5,10 +5,13 @@ import { LessonPath } from '../LessonPath/LessonPath'
 import { Exercise } from '../Exercise/Exercise'
 import { PhraseHome } from '../sections/PhrasePractice/PhraseHome'
 import { PhraseExercise } from '../sections/PhrasePractice/PhraseExercise'
+import { ArticleHome } from '../sections/ArticlePractice/ArticleHome'
+import { ArticlePractice } from '../sections/ArticlePractice/ArticlePractice'
 import { useProgress } from '../../hooks/useProgress'
 import { useDarkMode } from '../../hooks/useDarkMode'
 import { lessons } from '../../data/lessons'
 import { phraseCategories } from '../../data/phrases'
+import { articles } from '../../data/articles'
 import { schemes, getSchemeById } from '../../data/schemes'
 import type { SectionId } from '../../types'
 import styles from './App.module.css'
@@ -29,6 +32,7 @@ export function App() {
   const [screen, setScreen] = useState<Screen>({ type: 'home' })
   const [schemeId, setSchemeId] = useState('xiaohe')
   const [phraseCategoryId, setPhraseCategoryId] = useState<string | null>(null)
+  const [articleId, setArticleId] = useState<string | null>(null)
   const { stats, completeLesson } = useProgress()
   const [darkMode, toggleDarkMode] = useDarkMode()
 
@@ -72,9 +76,22 @@ export function App() {
     setPhraseCategoryId(null)
   }, [])
 
+  const handleSelectArticle = useCallback((id: string) => {
+    setArticleId(id)
+  }, [])
+
+  const handleArticleBack = useCallback(() => {
+    setArticleId(null)
+  }, [])
+
+  const handleArticleComplete = useCallback(() => {
+    setArticleId(null)
+  }, [])
+
   const handleTabChange = useCallback((tabId: string) => {
     setSection(tabId as SectionId)
     setPhraseCategoryId(null)
+    setArticleId(null)
     setScreen({ type: 'home' })
   }, [])
 
@@ -128,10 +145,17 @@ export function App() {
           />
         )}
 
-        {section === 'article' && (
-          <div style={{ padding: 24, textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-            文章练习 — 即将推出
-          </div>
+        {section === 'article' && !articleId && (
+          <ArticleHome onSelectArticle={handleSelectArticle} onBack={() => {}} />
+        )}
+
+        {section === 'article' && articleId && (
+          <ArticlePractice
+            article={articles.find(a => a.id === articleId)!}
+            scheme={currentScheme}
+            onComplete={handleArticleComplete}
+            onBack={handleArticleBack}
+          />
         )}
 
         {section === 'games' && (
