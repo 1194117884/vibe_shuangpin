@@ -21,17 +21,31 @@ describe('App', () => {
     expect(screen.getByText('0')).toBeInTheDocument()
   })
 
+  it('shows NavBar with four tabs', () => {
+    render(<App />)
+    expect(screen.getByText('基础练习')).toBeInTheDocument()
+    expect(screen.getByText('词组练习')).toBeInTheDocument()
+    expect(screen.getByText('文章练习')).toBeInTheDocument()
+    expect(screen.getByText('游戏')).toBeInTheDocument()
+  })
+
+  it('switches section when clicking a nav tab', () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('游戏'))
+    expect(screen.getByText('限时挑战')).toBeInTheDocument()
+  })
+
   it('allows clicking a lesson to start practicing', () => {
     render(<App />)
     const lesson = screen.getByText('声母 zh ch sh')
     fireEvent.click(lesson)
-    expect(screen.getByPlaceholderText('输入双拼...')).toBeInTheDocument()
+    expect(screen.getByLabelText('输入双拼编码')).toBeInTheDocument()
   })
 
   it('switches between home and lesson screens', () => {
     render(<App />)
     fireEvent.click(screen.getByText('声母 zh ch sh'))
-    expect(screen.getByPlaceholderText('输入双拼...')).toBeInTheDocument()
+    expect(screen.getByLabelText('输入双拼编码')).toBeInTheDocument()
     expect(screen.getByText('0')).toBeInTheDocument()
   })
 })

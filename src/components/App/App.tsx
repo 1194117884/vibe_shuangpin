@@ -7,6 +7,8 @@ import { PhraseHome } from '../sections/PhrasePractice/PhraseHome'
 import { PhraseExercise } from '../sections/PhrasePractice/PhraseExercise'
 import { ArticleHome } from '../sections/ArticlePractice/ArticleHome'
 import { ArticlePractice } from '../sections/ArticlePractice/ArticlePractice'
+import { GamesHome } from '../sections/Games/GamesHome'
+import { TimedChallenge } from '../sections/Games/TimedChallenge'
 import { useProgress } from '../../hooks/useProgress'
 import { useDarkMode } from '../../hooks/useDarkMode'
 import { lessons } from '../../data/lessons'
@@ -33,6 +35,7 @@ export function App() {
   const [schemeId, setSchemeId] = useState('xiaohe')
   const [phraseCategoryId, setPhraseCategoryId] = useState<string | null>(null)
   const [articleId, setArticleId] = useState<string | null>(null)
+  const [gameId, setGameId] = useState<string | null>(null)
   const { stats, completeLesson } = useProgress()
   const [darkMode, toggleDarkMode] = useDarkMode()
 
@@ -88,10 +91,19 @@ export function App() {
     setArticleId(null)
   }, [])
 
+  const handleSelectGame = useCallback((id: string) => {
+    setGameId(id)
+  }, [])
+
+  const handleGameBack = useCallback(() => {
+    setGameId(null)
+  }, [])
+
   const handleTabChange = useCallback((tabId: string) => {
     setSection(tabId as SectionId)
     setPhraseCategoryId(null)
     setArticleId(null)
+    setGameId(null)
     setScreen({ type: 'home' })
   }, [])
 
@@ -162,10 +174,16 @@ export function App() {
           )
         })()}
 
-        {section === 'games' && (
-          <div style={{ padding: 24, textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-            游戏 — 即将推出
-          </div>
+        {section === 'games' && !gameId && (
+          <GamesHome onSelectGame={handleSelectGame} onBack={() => {}} />
+        )}
+
+        {section === 'games' && gameId === 'timed' && (
+          <TimedChallenge
+            scheme={currentScheme}
+            onComplete={() => setGameId(null)}
+            onBack={handleGameBack}
+          />
         )}
       </main>
 

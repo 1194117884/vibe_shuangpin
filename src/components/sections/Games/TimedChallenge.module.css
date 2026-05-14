@@ -1,0 +1,94 @@
+.container {
+  width: 100%;
+}
+
+.startScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px;
+  gap: 16px;
+}
+
+.startTitle {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.startDesc {
+  color: var(--color-text-secondary);
+  font-size: 16px;
+}
+
+.startButton {
+  background: var(--color-green);
+  color: white;
+  padding: 14px 48px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  box-shadow: 0 4px 0 var(--color-green-hover);
+  transition: transform 0.05s, box-shadow 0.05s;
+}
+
+.startButton:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+.backBtn {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+.timerValue {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-green);
+}
+
+.timerLabel {
+  font-size: 20px;
+  color: var(--color-text-secondary);
+}
+
+.score {
+  text-align: center;
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.resultScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px;
+  gap: 16px;
+}
+
+.resultTitle {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.resultScore {
+  font-size: 24px;
+  color: var(--color-text-secondary);
+}
