@@ -149,14 +149,18 @@ export function App() {
           <ArticleHome onSelectArticle={handleSelectArticle} onBack={() => {}} />
         )}
 
-        {section === 'article' && articleId && (
-          <ArticlePractice
-            article={articles.find(a => a.id === articleId)!}
-            scheme={currentScheme}
-            onComplete={handleArticleComplete}
-            onBack={handleArticleBack}
-          />
-        )}
+        {section === 'article' && articleId && (() => {
+          const article = articles.find(a => a.id === articleId)
+          if (!article) return null
+          return (
+            <ArticlePractice
+              article={article}
+              scheme={currentScheme}
+              onComplete={handleArticleComplete}
+              onBack={handleArticleBack}
+            />
+          )
+        })()}
 
         {section === 'games' && (
           <div style={{ padding: 24, textAlign: 'center', color: 'var(--color-text-secondary)' }}>

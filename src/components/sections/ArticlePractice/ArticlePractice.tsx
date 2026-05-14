@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Exercise } from '../../Exercise/Exercise'
 import type { ShuangpinScheme } from '../../../types'
 import type { Article } from '../../../data/articles'
@@ -13,24 +13,22 @@ interface ArticlePracticeProps {
 
 export function ArticlePractice({ article, scheme, onComplete, onBack }: ArticlePracticeProps) {
   const [sentenceIndex, setSentenceIndex] = useState(0)
-  const [exerciseResults, setExerciseResults] = useState<{ correct: number; total: number }[]>([])
+  const exerciseResultsRef = useRef<{ correct: number; total: number }[]>([])
 
   const currentSentence = article.sentences[sentenceIndex]
   const isLastSentence = sentenceIndex >= article.sentences.length - 1
 
-  const totalCorrect = exerciseResults.reduce((sum, r) => sum + (r.correct > 0 ? 1 : 0), 0)
-  const totalExercises = exerciseResults.length
-
   const handleSentenceComplete = useCallback(
     (result: { correct: number; total: number; accuracy: number }) => {
-      setExerciseResults(prev => [...prev, { correct: result.correct, total: result.total }])
+      const newResult = { correct: result.correct, total: result.total }
+      exerciseResultsRef.current = [...exerciseResultsRef.current, newResult]
 
       if (!isLastSentence) {
         setSentenceIndex(i => i + 1)
       } else {
-        // All sentences done
-        const allCorrect = totalCorrect + (result.correct > 0 ? 1 : 0)
-        const allTotal = totalExercises + 1
+        const results = exerciseResultsRef.current
+        const allCorrect = results.filter(r => r.correct > 0).length
+        const allTotal = results.length
         onComplete({
           correct: allCorrect,
           total: allTotal,
@@ -38,7 +36,7 @@ export function ArticlePractice({ article, scheme, onComplete, onBack }: Article
         })
       }
     },
-    [isLastSentence, onComplete, totalCorrect, totalExercises],
+    [isLastSentence, onComplete],
   )
 
   if (!currentSentence) {
