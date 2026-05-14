@@ -33,7 +33,7 @@ export function useTyping(exercises: Exercise[]) {
       const result: ExerciseResult = {
         exercise,
         input,
-        correct: input === exercise.answer,
+        correct: input.replace(/ /g, '') === exercise.answer.replace(/ /g, ''),
         timeMs: 0,
       }
 

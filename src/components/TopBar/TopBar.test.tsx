@@ -11,6 +11,8 @@ describe('TopBar', () => {
       { id: 'sougou', name: '搜狗' },
     ],
     onSchemeChange: vi.fn(),
+    darkMode: false,
+    onToggleDark: vi.fn(),
   }
 
   it('shows streak count', () => {

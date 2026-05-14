@@ -49,6 +49,18 @@ export function App() {
     [screen],
   )
 
+  const lessonMaxLength = useMemo(() => {
+    if (!currentLesson) return 2
+    const hasMultiWord = currentLesson.exercises.some(e => e.answer.includes(' '))
+    return hasMultiWord ? 0 : 2
+  }, [currentLesson])
+
+  const lessonInputFilter = useMemo(() => {
+    if (!currentLesson) return undefined
+    const hasMultiWord = currentLesson.exercises.some(e => e.answer.includes(' '))
+    return hasMultiWord ? /[^a-z; ]/g : undefined
+  }, [currentLesson])
+
   const handleSelectLesson = useCallback((lessonId: string) => {
     setScreen({ type: 'lesson', lessonId })
   }, [])
@@ -138,6 +150,8 @@ export function App() {
             scheme={currentScheme}
             onComplete={handleComplete}
             onBack={handleBack}
+            maxLength={lessonMaxLength}
+            inputFilter={lessonInputFilter}
           />
         )}
 

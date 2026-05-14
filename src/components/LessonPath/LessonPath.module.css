@@ -52,7 +52,7 @@
 
 .unlocked {
   border-color: var(--color-green);
-  background: #f0fdf0;
+  background: var(--color-unlocked-bg);
 }
 
 .icon {
@@ -90,7 +90,7 @@
 }
 
 .chevron {
-  color: #ccc;
+  color: var(--color-chevron);
   font-size: 18px;
   flex-shrink: 0;
 }

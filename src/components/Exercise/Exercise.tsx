@@ -87,7 +87,7 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
       let isCorrect = false
 
       if ((ml > 0 ? val.length === ml : false) && currentExercise) {
-        if (val === currentExercise.answer) {
+        if (val.replace(/ /g, '') === currentExercise.answer.replace(/ /g, '')) {
           isCorrect = true
           shouldSubmit = true
         } else {
@@ -109,7 +109,7 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
         submitCorrect(val)
       }
     },
-    [feedback, currentExercise, setInput, submitCorrect, playCorrect, inputFilter, maxLength],
+    [feedback, currentExercise, setInput, submitCorrect, playCorrect, playIncorrect, inputFilter, maxLength],
   )
 
   const handleKeyPress = useCallback(
@@ -121,7 +121,7 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
       if (ml > 0 && newVal.length > ml) return
 
       if (ml > 0 && newVal.length === ml) {
-        if (newVal === currentExercise.answer) {
+        if (newVal.replace(/ /g, '') === currentExercise.answer.replace(/ /g, '')) {
           setInput(newVal)
           playCorrect()
           submitCorrect(newVal)
@@ -145,7 +145,7 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
 
   const submitAnswer_ = useCallback(() => {
     if (!currentExercise || input.length === 0 || feedback === 'incorrect') return
-    if (input === currentExercise.answer) {
+    if (input.replace(/ /g, '') === currentExercise.answer.replace(/ /g, '')) {
       playCorrect()
       submitCorrect(input)
     } else {

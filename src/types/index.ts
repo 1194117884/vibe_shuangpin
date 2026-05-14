@@ -1,3 +1,5 @@
+export type SectionId = 'basic' | 'phrase' | 'article' | 'games'
+
 /** A Shuangpin key mapping scheme */
 export interface ShuangpinScheme {
   id: string
@@ -20,6 +22,8 @@ export interface Exercise {
   prompt: string
   answer: string
   type: ExerciseType
+  /** Optional Chinese character for display */
+  char?: string
 }
 
 /** A lesson containing multiple exercises */

@@ -5,7 +5,7 @@ import { Keyboard } from './Keyboard'
 describe('Keyboard', () => {
   const baseProps = {
     highlightKeys: [] as string[],
-    schemeLabels: {} as Record<string, string>,
+    schemeLabels: {} as Record<string, { initials: string[]; finals: string[] }>,
     onKeyPress: () => {},
   }
 
@@ -25,15 +25,19 @@ describe('Keyboard', () => {
     )
     const aKey = screen.getByText('a').closest('button')
     const sKey = screen.getByText('s').closest('button')
-    expect(aKey).toHaveAttribute('aria-pressed', 'true')
-    expect(sKey).toHaveAttribute('aria-pressed', 'true')
+    expect(aKey?.className).toContain('highlighted')
+    expect(sKey?.className).toContain('highlighted')
   })
 
   it('shows scheme labels on keys', () => {
     render(
       <Keyboard
         {...baseProps}
-        schemeLabels={{ v: 'zh', i: 'ch', u: 'sh' }}
+        schemeLabels={{
+          v: { initials: ['zh'], finals: ['ui', 'v'] },
+          i: { initials: ['ch'], finals: ['i'] },
+          u: { initials: ['sh'], finals: ['u'] },
+        }}
       />,
     )
     expect(screen.getByText('zh')).toBeInTheDocument()

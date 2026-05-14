@@ -1,11 +1,11 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent, act } from '@testing-library/react'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { Exercise } from './Exercise'
 import type { Exercise as ExerciseType, ShuangpinScheme } from '../../types'
 
 const mockExercises: ExerciseType[] = [
-  { prompt: 'zhong', answer: 'vs', type: 'syllable' },
-  { prompt: 'guo', answer: 'go', type: 'syllable' },
+  { prompt: 'zhong', answer: 'vs', type: 'syllable', char: '中' },
+  { prompt: 'guo', answer: 'go', type: 'syllable', char: '国' },
 ]
 
 const mockScheme: ShuangpinScheme = {
@@ -26,73 +26,121 @@ const baseProps = {
 }
 
 describe('Exercise', () => {
-  it('displays the current prompt', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('displays the current prompt pinyin', () => {
     render(<Exercise {...baseProps} />)
     expect(screen.getByText('zhong')).toBeInTheDocument()
   })
 
-  it('shows progress (1/2)', () => {
+  it('renders the character display', () => {
     render(<Exercise {...baseProps} />)
-    expect(screen.getByText(/1.*2/)).toBeInTheDocument()
+    expect(screen.getByText('中')).toBeInTheDocument()
   })
 
   it('accepts typed input', () => {
     render(<Exercise {...baseProps} />)
-    const input = screen.getByRole('textbox')
+    const input = screen.getByLabelText('输入双拼编码')
     fireEvent.change(input, { target: { value: 'v' } })
     expect(input).toHaveValue('v')
   })
 
-  it('submits on Enter key and moves to next exercise', () => {
+  it('auto-submits on 2-character correct answer and advances', () => {
     render(<Exercise {...baseProps} />)
-    const input = screen.getByRole('textbox')
+    const input = screen.getByLabelText('输入双拼编码') as HTMLInputElement
     fireEvent.change(input, { target: { value: 'vs' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-    // After correct answer, should show 'guo' as next prompt
+    // Should advance to next exercise
     expect(screen.getByText('guo')).toBeInTheDocument()
+    expect(screen.getByText('国')).toBeInTheDocument()
+    // Input should be cleared
+    expect(input.value).toBe('')
   })
 
-  it('shows correct feedback after submission', () => {
+  it('shows error and clears input on wrong answer', () => {
+    vi.useFakeTimers()
     render(<Exercise {...baseProps} />)
-    const input = screen.getByRole('textbox')
-    fireEvent.change(input, { target: { value: 'vs' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-    expect(screen.getByText('正确!')).toBeInTheDocument()
-  })
-
-  it('shows incorrect feedback with correct answer', () => {
-    render(<Exercise {...baseProps} />)
-    const input = screen.getByRole('textbox')
+    const input = screen.getByLabelText('输入双拼编码') as HTMLInputElement
     fireEvent.change(input, { target: { value: 'xx' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-    expect(screen.getByText(/正确: vs/)).toBeInTheDocument()
+    // Value is set momentarily before being cleared
+    expect(input.value).toBe('xx')
+    // After 500ms, input should be cleared
+    act(() => { vi.advanceTimersByTime(500) })
+    expect(input.value).toBe('')
+  })
+
+  it('submits via keyboard key press', () => {
+    render(<Exercise {...baseProps} />)
+    fireEvent.click(screen.getByLabelText('键 v'))
+    const input = screen.getByLabelText('输入双拼编码') as HTMLInputElement
+    expect(input.value).toBe('v')
+    fireEvent.click(screen.getByLabelText('键 s'))
+    // Should auto-submit and advance
+    expect(screen.getByText('guo')).toBeInTheDocument()
+    expect(input.value).toBe('')
   })
 
   it('shows completion screen after all exercises', () => {
     render(<Exercise {...baseProps} />)
-    const input = screen.getByRole('textbox')
-    fireEvent.change(input, { target: { value: 'vs' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-    fireEvent.change(input, { target: { value: 'go' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-    expect(screen.getByText(/太棒了/)).toBeInTheDocument()
+    // Answer first exercise
+    fireEvent.change(screen.getByLabelText('输入双拼编码'), { target: { value: 'vs' } })
+    // Answer second exercise
+    fireEvent.change(screen.getByLabelText('输入双拼编码'), { target: { value: 'go' } })
+    expect(screen.getByText('练习完成!')).toBeInTheDocument()
   })
 
-  it('calls onComplete when continuing after completion', () => {
+  it('calls onComplete when returning after completion', () => {
     const onComplete = vi.fn()
     render(<Exercise {...baseProps} onComplete={onComplete} />)
-    const input = screen.getByRole('textbox')
-    fireEvent.change(input, { target: { value: 'vs' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-    fireEvent.change(input, { target: { value: 'go' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-    // Wait for completion view to appear, then click continue
-    fireEvent.click(screen.getByText('继续'))
+    fireEvent.change(screen.getByLabelText('输入双拼编码'), { target: { value: 'vs' } })
+    fireEvent.change(screen.getByLabelText('输入双拼编码'), { target: { value: 'go' } })
+    fireEvent.click(screen.getByText('返回'))
     expect(onComplete).toHaveBeenCalledOnce()
   })
 
-  it('renders keyboard', () => {
+  it('renders keyboard keys', () => {
     render(<Exercise {...baseProps} />)
-    expect(screen.getByRole('group', { name: '键盘' })).toBeInTheDocument()
+    expect(screen.getByLabelText('键 q')).toBeInTheDocument()
+    expect(screen.getByLabelText('键 a')).toBeInTheDocument()
+    expect(screen.getByLabelText('键 z')).toBeInTheDocument()
+  })
+
+  it('calls onBack when back button is clicked', () => {
+    const onBack = vi.fn()
+    render(<Exercise {...baseProps} onBack={onBack} />)
+    fireEvent.click(screen.getByRole('button', { name: '返回' }))
+    expect(onBack).toHaveBeenCalledOnce()
+  })
+
+  it('accepts longer input when maxLength is 0', () => {
+    const exercises = [{ prompt: 'zhong guo', answer: 'vs go', type: 'word' as const, char: '中国' }]
+    render(
+      <Exercise
+        {...baseProps}
+        exercises={exercises}
+        maxLength={0}
+        inputFilter={/[^a-z; ]/g}
+      />,
+    )
+    const input = screen.getByLabelText('输入双拼编码') as HTMLInputElement
+    fireEvent.change(input, { target: { value: 'vs ' } })
+    expect(input.value).toBe('vs ')
+    fireEvent.change(input, { target: { value: 'vs g' } })
+    expect(input.value).toBe('vs g')
+    // Should NOT auto-submit at 2 chars
+    fireEvent.change(input, { target: { value: 'vs' } })
+    expect(input.value).toBe('vs')
+  })
+
+  it('toggles pinyin display', () => {
+    render(<Exercise {...baseProps} />)
+    // Pinyin visible by default
+    expect(screen.getByText('zhong')).toBeInTheDocument()
+    // Toggle off
+    fireEvent.click(screen.getByLabelText('显示拼音'))
+    expect(screen.queryByText('zhong')).not.toBeInTheDocument()
+    // Char should still show
+    expect(screen.getByText('中')).toBeInTheDocument()
   })
 })

@@ -7,6 +7,7 @@ const mockExercises: Exercise[] = [
   { prompt: 'zhong', answer: 'vs', type: 'syllable' },
   { prompt: 'guo', answer: 'go', type: 'syllable' },
   { prompt: 'ren', answer: 'rf', type: 'syllable' },
+  { prompt: 'zhong guo', answer: 'vs go', type: 'word', char: '中国' },
 ]
 
 describe('useTyping', () => {
@@ -49,6 +50,7 @@ describe('useTyping', () => {
     act(() => result.current.submitAnswer('vs'))
     act(() => result.current.submitAnswer('go'))
     act(() => result.current.submitAnswer('rf'))
+    act(() => result.current.submitAnswer('vs go'))
     expect(result.current.isComplete).toBe(true)
   })
 
@@ -58,7 +60,35 @@ describe('useTyping', () => {
     act(() => result.current.submitAnswer('vs'))
     act(() => result.current.submitAnswer('xx'))
     act(() => result.current.submitAnswer('rf'))
-    expect(result.current.accuracy).toBe(2 / 3)
+    act(() => result.current.submitAnswer('vs go'))
+    expect(result.current.accuracy).toBe(3 / 4)
+  })
+
+  it('accepts multi-word answer without spaces', () => {
+    const { result } = renderHook(() => useTyping(mockExercises))
+    act(() => { result.current.submitAnswer('vs') })
+    act(() => { result.current.submitAnswer('go') })
+    act(() => { result.current.submitAnswer('rf') })
+    act(() => { result.current.submitAnswer('vsgo') })
+    expect(result.current.results[3]?.correct).toBe(true)
+  })
+
+  it('accepts multi-word answer with spaces', () => {
+    const { result } = renderHook(() => useTyping(mockExercises))
+    act(() => { result.current.submitAnswer('vs') })
+    act(() => { result.current.submitAnswer('go') })
+    act(() => { result.current.submitAnswer('rf') })
+    act(() => { result.current.submitAnswer('vs go') })
+    expect(result.current.results[3]?.correct).toBe(true)
+  })
+
+  it('rejects incorrect multi-word answer', () => {
+    const { result } = renderHook(() => useTyping(mockExercises))
+    act(() => { result.current.submitAnswer('vs') })
+    act(() => { result.current.submitAnswer('go') })
+    act(() => { result.current.submitAnswer('rf') })
+    act(() => { result.current.submitAnswer('wrong') })
+    expect(result.current.results[3]?.correct).toBe(false)
   })
 
   it('resets correctly', () => {

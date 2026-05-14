@@ -11,9 +11,11 @@ interface TopBarProps {
   schemeId: string
   availableSchemes: AvailableScheme[]
   onSchemeChange: (id: string) => void
+  darkMode: boolean
+  onToggleDark: () => void
 }
 
-export function TopBar({ streak, schemeId, availableSchemes, onSchemeChange }: TopBarProps) {
+export function TopBar({ streak, schemeId, availableSchemes, onSchemeChange, darkMode, onToggleDark }: TopBarProps) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -39,6 +41,14 @@ export function TopBar({ streak, schemeId, availableSchemes, onSchemeChange }: T
       </div>
 
       <div className={styles.right} ref={ref}>
+        <button
+          className={styles.themeToggle}
+          onClick={onToggleDark}
+          aria-label={darkMode ? '切换到亮色模式' : '切换到暗色模式'}
+        >
+          {darkMode ? '☀️' : '🌙'}
+        </button>
+
         <button
           className={styles.schemeButton}
           onClick={() => setOpen(!open)}

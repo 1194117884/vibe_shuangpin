@@ -26,7 +26,33 @@
   --radius-xl: 20px;
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --color-keyboard-bg: #d7d7d7;
+  --color-key-shadow: #b3b3b3;
+  --color-highlight-shadow: #46a302;
+  --color-correct-bg: #eafbea;
+  --color-incorrect-bg: #ffeaea;
+  --color-unlocked-bg: #f0fdf0;
+  --color-chevron: #ccc;
+  --color-hover: #e5e5e5;
   --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --color-bg: #1a1a2e;
+  --color-surface: #242540;
+  --color-text: #e8e8e8;
+  --color-text-secondary: #9e9eae;
+  --color-border: #3a3a5c;
+  --color-keyboard-bg: #1e1e38;
+  --color-key-shadow: #1a1a2e;
+  --color-highlight-shadow: #2d6e00;
+  --color-correct-bg: #1a3a1a;
+  --color-incorrect-bg: #3a1a1a;
+  --color-unlocked-bg: #1a2e1a;
+  --color-chevron: #5a5a7a;
+  --color-hover: #3a3a5c;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 html {
