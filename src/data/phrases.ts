@@ -48,7 +48,7 @@ export const phraseCategories: PhraseCategory[] = [
       { prompt: 'fei ji', answer: 'fw ji', type: 'word', char: '飞机' },
       { prompt: 'huo che', answer: 'ho ie', type: 'word', char: '火车' },
       { prompt: 'gong jiao', answer: 'gs jn', type: 'word', char: '公交' },
-      { prompt: 'di tie', answer: 'di tt', type: 'word', char: '地铁' },
+      { prompt: 'di tie', answer: 'di tp', type: 'word', char: '地铁' },
       { prompt: 'jiu dian', answer: 'jq dm', type: 'word', char: '酒店' },
       { prompt: 'lv you', answer: 'lv yq', type: 'word', char: '旅游' },
     ],
