@@ -1,20 +1,36 @@
 import { useState, useCallback, useMemo } from 'react'
 import { TopBar } from '../TopBar/TopBar'
+import { NavBar } from '../NavBar/NavBar'
 import { LessonPath } from '../LessonPath/LessonPath'
 import { Exercise } from '../Exercise/Exercise'
+import { PhraseHome } from '../sections/PhrasePractice/PhraseHome'
+import { PhraseExercise } from '../sections/PhrasePractice/PhraseExercise'
 import { useProgress } from '../../hooks/useProgress'
+import { useDarkMode } from '../../hooks/useDarkMode'
 import { lessons } from '../../data/lessons'
+import { phraseCategories } from '../../data/phrases'
 import { schemes, getSchemeById } from '../../data/schemes'
+import type { SectionId } from '../../types'
 import styles from './App.module.css'
+
+const TABS = [
+  { id: 'basic' as SectionId, label: '基础练习' },
+  { id: 'phrase' as SectionId, label: '词组练习' },
+  { id: 'article' as SectionId, label: '文章练习' },
+  { id: 'games' as SectionId, label: '游戏' },
+]
 
 type Screen =
   | { type: 'home' }
   | { type: 'lesson'; lessonId: string }
 
 export function App() {
+  const [section, setSection] = useState<SectionId>('basic')
   const [screen, setScreen] = useState<Screen>({ type: 'home' })
   const [schemeId, setSchemeId] = useState('xiaohe')
+  const [phraseCategoryId, setPhraseCategoryId] = useState<string | null>(null)
   const { stats, completeLesson } = useProgress()
+  const [darkMode, toggleDarkMode] = useDarkMode()
 
   const currentScheme = useMemo(
     () => getSchemeById(schemeId) ?? schemes[0]!,
@@ -44,6 +60,18 @@ export function App() {
     setScreen({ type: 'home' })
   }, [])
 
+  const handlePhraseCategory = useCallback((categoryId: string) => {
+    setPhraseCategoryId(categoryId)
+  }, [])
+
+  const handlePhraseBack = useCallback(() => {
+    setPhraseCategoryId(null)
+  }, [])
+
+  const handlePhraseComplete = useCallback(() => {
+    setPhraseCategoryId(null)
+  }, [])
+
   const schemeNames = useMemo(
     () => schemes.map(s => ({ id: s.id, name: s.name })),
     [],
@@ -56,10 +84,12 @@ export function App() {
         schemeId={schemeId}
         availableSchemes={schemeNames}
         onSchemeChange={setSchemeId}
+        darkMode={darkMode}
+        onToggleDark={toggleDarkMode}
       />
 
       <main className={styles.main}>
-        {screen.type === 'home' && (
+        {section === 'basic' && screen.type === 'home' && (
           <LessonPath
             lessons={lessons}
             progress={stats.lessonProgress}
@@ -67,7 +97,7 @@ export function App() {
           />
         )}
 
-        {screen.type === 'lesson' && currentLesson && (
+        {section === 'basic' && screen.type === 'lesson' && currentLesson && (
           <Exercise
             exercises={currentLesson.exercises}
             scheme={currentScheme}
@@ -75,7 +105,37 @@ export function App() {
             onBack={handleBack}
           />
         )}
+
+        {section === 'phrase' && !phraseCategoryId && (
+          <PhraseHome
+            onSelectCategory={handlePhraseCategory}
+            onBack={() => {}}
+          />
+        )}
+
+        {section === 'phrase' && phraseCategoryId && (
+          <PhraseExercise
+            exercises={phraseCategories.find(c => c.id === phraseCategoryId)?.exercises ?? []}
+            scheme={currentScheme}
+            onComplete={handlePhraseComplete}
+            onBack={handlePhraseBack}
+          />
+        )}
+
+        {section === 'article' && (
+          <div style={{ padding: 24, textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+            文章练习 — 即将推出
+          </div>
+        )}
+
+        {section === 'games' && (
+          <div style={{ padding: 24, textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+            游戏 — 即将推出
+          </div>
+        )}
       </main>
+
+      <NavBar tabs={TABS} activeTab={section} onTabChange={(tabId) => setSection(tabId as SectionId)} />
     </div>
   )
 }
