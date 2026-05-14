@@ -1,125 +1,260 @@
-.exerciseContainer {
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  padding: 32px 16px;
-  max-width: 600px;
+  width: 100%;
+  max-width: 896px;
   margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ── Options bar ── */
+
+.optionsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+  margin-bottom: 16px;
 }
 
-.progressSection {
-  width: 100%;
-  text-align: center;
+.optionsLeft {
+  display: flex;
+  align-items: center;
 }
 
-.progressBar {
-  width: 100%;
-  height: 12px;
-  background: var(--color-border);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 8px;
+.optionsRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
-.progressFill {
-  height: 100%;
-  background: var(--color-green);
-  border-radius: 6px;
-  transition: width 0.3s ease;
-}
-
-.progressText {
+.backButton {
   font-size: 14px;
   color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
 }
 
-.promptCard {
-  background: var(--color-surface);
-  border-radius: var(--radius-xl);
-  padding: 40px 32px;
-  box-shadow: var(--shadow-md);
-  text-align: center;
-  width: 100%;
-}
-
-.prompt {
-  font-size: 48px;
-  font-weight: 700;
+.backButton:hover {
+  background: var(--color-hover, #e5e5e5);
   color: var(--color-text);
-  margin-bottom: 24px;
-  letter-spacing: 4px;
 }
 
-.inputSection {
+.optionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  accent-color: var(--color-green);
+}
+
+/* ── Practice card ── */
+
+.practiceCard {
+  position: relative;
   width: 100%;
+  min-height: 280px;
+  padding: 48px;
+  border-radius: 32px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.practiceCard.correct {
+  border-color: var(--color-correct);
+  box-shadow:
+    0 24px 48px rgba(26, 26, 26, 0.1),
+    0 8px 24px rgba(26, 26, 26, 0.05),
+    0 0 60px rgba(88, 204, 2, 0.3);
+}
+
+.practiceCard.incorrect {
+  border-color: var(--color-incorrect);
+  box-shadow:
+    0 24px 48px rgba(26, 26, 26, 0.1),
+    0 8px 24px rgba(26, 26, 26, 0.05),
+    0 0 60px rgba(255, 75, 75, 0.3);
+}
+
+/* Decorative border-only circles */
+.decoTL {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 96px;
+  height: 96px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.decoBR {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 80px;
+  height: 80px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Ink-drop transition effect */
+.inkDrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.inkDrop::after {
+  content: '';
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: rgba(88, 204, 2, 0.15);
+  animation: inkRipple 0.5s ease-out forwards;
+}
+
+@keyframes inkRipple {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* Main content area */
+.practiceContent {
+  position: relative;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 12px;
+  min-height: 180px;
+}
+
+.pinyin {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+}
+
+.char {
+  font-size: 7rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+/* Input row */
+.inputRow {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .input {
-  width: 200px;
-  padding: 12px 16px;
-  font-size: 24px;
+  width: 112px;
+  height: 56px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-border);
   text-align: center;
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--color-text);
   outline: none;
-  font-family: var(--font-sans);
+  letter-spacing: 0.15em;
   transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.5;
 }
 
 .input:focus {
-  border-color: var(--color-blue);
+  border-bottom-color: var(--color-green);
 }
 
-.inputCorrect {
-  border-color: var(--color-correct);
-  background: #eafbea;
+.inputError {
+  border-bottom-color: var(--color-incorrect);
 }
 
-.inputIncorrect {
-  border-color: var(--color-incorrect);
-  background: #ffeaea;
+.submitButton {
+  margin-left: 12px;
+  background: var(--color-green);
+  color: white;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  box-shadow: 0 4px 0 var(--color-green-hover, #46a302);
+  transition: transform 0.05s, box-shadow 0.05s;
+  white-space: nowrap;
 }
 
-.hint {
-  font-size: 14px;
-  color: var(--color-text-secondary);
+.submitButton:active {
+  transform: translateY(4px);
+  box-shadow: none;
 }
 
-.feedback {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  animation: fadeIn 0.3s ease;
+/* ── Keyboard wrapper ── */
+
+.keyboardWrapper {
+  width: 100%;
 }
 
-.feedbackCorrect {
-  color: var(--color-correct);
-}
-
-.feedbackIncorrect {
-  color: var(--color-incorrect);
-}
+/* ── Completion screen ── */
 
 .completionCard {
   background: var(--color-surface);
-  border-radius: var(--radius-xl);
+  border-radius: 20px;
   padding: 48px 32px;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 100%;
+  max-width: 400px;
 }
 
 .completionTitle {
   font-size: 32px;
   font-weight: 700;
-  color: var(--color-green);
+  color: var(--color-green, #58cc02);
   margin-bottom: 16px;
 }
 
@@ -130,15 +265,16 @@
 }
 
 .continueButton {
-  background: var(--color-green);
+  background: var(--color-green, #58cc02);
   color: white;
   padding: 14px 48px;
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   font-size: 18px;
   font-weight: 700;
-  box-shadow: 0 4px 0 var(--color-green-hover);
-  transition: transform 0.05s, box-shadow 0.05s;
   cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 0 var(--color-green-hover, #46a302);
+  transition: transform 0.05s, box-shadow 0.05s;
 }
 
 .continueButton:active {
@@ -146,16 +282,54 @@
   box-shadow: none;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  .practiceCard {
+    padding: 32px 24px;
+    min-height: 220px;
+    border-radius: 24px;
+  }
+
+  .char {
+    font-size: 5rem;
+  }
+
+  .pinyin {
+    font-size: 16px;
+  }
+
+  .input {
+    width: 96px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .decoTL {
+    width: 64px;
+    height: 64px;
+  }
+
+  .decoBR {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 @media (max-width: 480px) {
-  .prompt {
-    font-size: 36px;
-  }
-  .promptCard {
+  .practiceCard {
     padding: 24px 16px;
+    min-height: 180px;
+    border-radius: 20px;
+  }
+
+  .char {
+    font-size: 3.75rem;
+  }
+
+  .input {
+    width: 80px;
+    height: 40px;
+    font-size: 20px;
   }
 }

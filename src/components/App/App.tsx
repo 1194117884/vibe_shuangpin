@@ -72,6 +72,12 @@ export function App() {
     setPhraseCategoryId(null)
   }, [])
 
+  const handleTabChange = useCallback((tabId: string) => {
+    setSection(tabId as SectionId)
+    setPhraseCategoryId(null)
+    setScreen({ type: 'home' })
+  }, [])
+
   const schemeNames = useMemo(
     () => schemes.map(s => ({ id: s.id, name: s.name })),
     [],
@@ -135,7 +141,7 @@ export function App() {
         )}
       </main>
 
-      <NavBar tabs={TABS} activeTab={section} onTabChange={(tabId) => setSection(tabId as SectionId)} />
+      <NavBar tabs={TABS} activeTab={section} onTabChange={handleTabChange} />
     </div>
   )
 }
