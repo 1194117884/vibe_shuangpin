@@ -1,42 +1,70 @@
 import { useState, useCallback, useMemo } from 'react'
-import { TopBar } from '../TopBar/TopBar'
-import { NavBar } from '../NavBar/NavBar'
-import { LessonPath } from '../LessonPath/LessonPath'
+import { SideNav } from '../SideNav/SideNav'
+import { TopNav } from '../TopNav/TopNav'
+import { BottomNav } from '../BottomNav/BottomNav'
+import { Dashboard } from '../Dashboard/Dashboard'
 import { Exercise } from '../Exercise/Exercise'
-import { PhraseHome } from '../sections/PhrasePractice/PhraseHome'
-import { PhraseExercise } from '../sections/PhrasePractice/PhraseExercise'
-import { ArticleHome } from '../sections/ArticlePractice/ArticleHome'
-import { ArticlePractice } from '../sections/ArticlePractice/ArticlePractice'
-import { GamesHome } from '../sections/Games/GamesHome'
-import { TimedChallenge } from '../sections/Games/TimedChallenge'
+import { ArticleTyping } from '../sections/ArticlePractice/ArticleTyping'
+import { SchemeSelect } from '../SchemeSelect/SchemeSelect'
+import { Profile } from '../Profile/Profile'
+import { Leaderboard } from '../Leaderboard/Leaderboard'
 import { useProgress } from '../../hooks/useProgress'
 import { useDarkMode } from '../../hooks/useDarkMode'
 import { lessons } from '../../data/lessons'
 import { phraseCategories } from '../../data/phrases'
-import { articles } from '../../data/articles'
 import { schemes, getSchemeById } from '../../data/schemes'
-import type { SectionId } from '../../types'
+import type { Section, PracticeScreen, ExerciseMode, Exercise as ExerciseType } from '../../types'
 import styles from './App.module.css'
 
-const TABS = [
-  { id: 'basic' as SectionId, label: '基础练习' },
-  { id: 'phrase' as SectionId, label: '词组练习' },
-  { id: 'article' as SectionId, label: '文章练习' },
-  { id: 'games' as SectionId, label: '游戏' },
-]
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i]!, a[j]!] = [a[j]!, a[i]!]
+  }
+  return a
+}
 
-type Screen =
-  | { type: 'home' }
-  | { type: 'lesson'; lessonId: string }
+function generateExercises(mode: ExerciseMode): { exercises: ExerciseType[]; label: string } {
+  switch (mode) {
+    case 'basic': {
+      const exercises = lessons.flatMap(l => l.exercises)
+      return { exercises, label: '基础练习' }
+    }
+    case 'phrase': {
+      const exercises = shuffle(phraseCategories.flatMap(c => c.exercises))
+      return { exercises, label: '词组练习' }
+    }
+    case 'article': {
+      // Article mode — exercises generated dynamically by ArticleTyping
+      return { exercises: [], label: '文章练习' }
+    }
+    case 'game': {
+      const exercises = shuffle([
+        ...lessons.flatMap(l => l.exercises),
+        ...phraseCategories.flatMap(c => c.exercises),
+      ])
+      return { exercises, label: '打字游戏' }
+    }
+  }
+}
+
+function getExerciseConfig(exercises: ExerciseType[]) {
+  const hasMultiWord = exercises.some(e => e.answer.includes(' '))
+  return {
+    maxLength: hasMultiWord ? 0 : 2,
+    inputFilter: hasMultiWord ? /[^a-z; ]/g : undefined,
+  }
+}
 
 export function App() {
-  const [section, setSection] = useState<SectionId>('basic')
-  const [screen, setScreen] = useState<Screen>({ type: 'home' })
-  const [schemeId, setSchemeId] = useState('xiaohe')
-  const [phraseCategoryId, setPhraseCategoryId] = useState<string | null>(null)
-  const [articleId, setArticleId] = useState<string | null>(null)
-  const [gameId, setGameId] = useState<string | null>(null)
-  const { stats, completeLesson } = useProgress()
+  const [section, setSection] = useState<Section>('practice')
+  const [practiceScreen, setPracticeScreen] = useState<PracticeScreen>('home')
+  const [schemeId, setSchemeId] = useState(() => localStorage.getItem('vibe-shuangpin-scheme') ?? 'xiaohe')
+  const [exerciseMode, setExerciseMode] = useState<ExerciseMode | null>(null)
+  const [exercises, setExercises] = useState<ExerciseType[]>([])
+  const [exerciseLabel, setExerciseLabel] = useState('')
+  const { stats, resetProgress } = useProgress()
   const [darkMode, toggleDarkMode] = useDarkMode()
 
   const currentScheme = useMemo(
@@ -44,164 +72,147 @@ export function App() {
     [schemeId],
   )
 
-  const currentLesson = useMemo(
-    () => lessons.find(l => l.id === (screen.type === 'lesson' ? screen.lessonId : undefined)),
-    [screen],
+  const exerciseConfig = useMemo(
+    () => getExerciseConfig(exercises),
+    [exercises],
   )
 
-  const lessonMaxLength = useMemo(() => {
-    if (!currentLesson) return 2
-    const hasMultiWord = currentLesson.exercises.some(e => e.answer.includes(' '))
-    return hasMultiWord ? 0 : 2
-  }, [currentLesson])
-
-  const lessonInputFilter = useMemo(() => {
-    if (!currentLesson) return undefined
-    const hasMultiWord = currentLesson.exercises.some(e => e.answer.includes(' '))
-    return hasMultiWord ? /[^a-z; ]/g : undefined
-  }, [currentLesson])
-
-  const handleSelectLesson = useCallback((lessonId: string) => {
-    setScreen({ type: 'lesson', lessonId })
+  const handleSectionChange = useCallback((s: Section) => {
+    setSection(s)
+    setPracticeScreen('home')
+    setExerciseMode(null)
+    setExercises([])
   }, [])
 
-  const handleComplete = useCallback(
-    (result: { correct: number; total: number; accuracy: number }) => {
-      if (screen.type === 'lesson') {
-        completeLesson(screen.lessonId, result.accuracy, 0)
-      }
-      setScreen({ type: 'home' })
-    },
-    [screen, completeLesson],
-  )
+  const handleDashboardNavigate = useCallback((mode: ExerciseMode) => {
+    const { exercises: exs, label } = generateExercises(mode)
+    setExerciseMode(mode)
+    setExercises(exs)
+    setExerciseLabel(label)
+    setPracticeScreen('exercise')
+  }, [])
+
+  const handleComplete = useCallback(() => {
+    setPracticeScreen('home')
+    setExerciseMode(null)
+    setExercises([])
+    setExerciseLabel('')
+  }, [])
 
   const handleBack = useCallback(() => {
-    setScreen({ type: 'home' })
+    setPracticeScreen('home')
+    setExerciseMode(null)
+    setExercises([])
+    setExerciseLabel('')
   }, [])
 
-  const handlePhraseCategory = useCallback((categoryId: string) => {
-    setPhraseCategoryId(categoryId)
+  const handleSelectScheme = useCallback(() => {
+    setPracticeScreen('scheme-select')
   }, [])
 
-  const handlePhraseBack = useCallback(() => {
-    setPhraseCategoryId(null)
+  const handleSchemeChange = useCallback((id: string) => {
+    setSchemeId(id)
+    localStorage.setItem('vibe-shuangpin-scheme', id)
+    setPracticeScreen('home')
   }, [])
 
-  const handlePhraseComplete = useCallback(() => {
-    setPhraseCategoryId(null)
+  const handleSchemeBack = useCallback(() => {
+    setPracticeScreen('home')
   }, [])
 
-  const handleSelectArticle = useCallback((id: string) => {
-    setArticleId(id)
-  }, [])
+  const topNavTitle = useMemo(() => {
+    if (section === 'leaderboard') return '排行榜'
+    if (section === 'shop') return '我的'
+    if (section !== 'practice') return ''
+    if (practiceScreen === 'exercise') return exerciseLabel
+    if (practiceScreen === 'scheme-select') return '选择方案'
+    return ''
+  }, [section, practiceScreen, exerciseLabel])
 
-  const handleArticleBack = useCallback(() => {
-    setArticleId(null)
-  }, [])
-
-  const handleArticleComplete = useCallback(() => {
-    setArticleId(null)
-  }, [])
-
-  const handleSelectGame = useCallback((id: string) => {
-    setGameId(id)
-  }, [])
-
-  const handleGameBack = useCallback(() => {
-    setGameId(null)
-  }, [])
-
-  const handleTabChange = useCallback((tabId: string) => {
-    setSection(tabId as SectionId)
-    setPhraseCategoryId(null)
-    setArticleId(null)
-    setGameId(null)
-    setScreen({ type: 'home' })
-  }, [])
-
-  const schemeNames = useMemo(
-    () => schemes.map(s => ({ id: s.id, name: s.name })),
-    [],
-  )
+  const showSimpleTopNav = section !== 'practice' || practiceScreen !== 'home'
 
   return (
     <div className={styles.app}>
-      <TopBar
-        streak={stats.streaks}
-        schemeId={schemeId}
-        availableSchemes={schemeNames}
-        onSchemeChange={setSchemeId}
+      <SideNav
+        section={section}
+        onSectionChange={handleSectionChange}
         darkMode={darkMode}
         onToggleDark={toggleDarkMode}
+        schemeId={schemeId}
+        onSelectScheme={handleSelectScheme}
       />
 
-      <main className={styles.main}>
-        {section === 'basic' && screen.type === 'home' && (
-          <LessonPath
-            lessons={lessons}
-            progress={stats.lessonProgress}
-            onSelectLesson={handleSelectLesson}
-          />
-        )}
+      <div className={styles.mainArea}>
+        <TopNav
+          streak={stats.streaks}
+          darkMode={darkMode}
+          onToggleDark={toggleDarkMode}
+          title={showSimpleTopNav ? topNavTitle : undefined}
+          simple={showSimpleTopNav}
+        />
 
-        {section === 'basic' && screen.type === 'lesson' && currentLesson && (
-          <Exercise
-            exercises={currentLesson.exercises}
-            scheme={currentScheme}
-            onComplete={handleComplete}
-            onBack={handleBack}
-            maxLength={lessonMaxLength}
-            inputFilter={lessonInputFilter}
-          />
-        )}
-
-        {section === 'phrase' && !phraseCategoryId && (
-          <PhraseHome
-            onSelectCategory={handlePhraseCategory}
-            onBack={() => {}}
-          />
-        )}
-
-        {section === 'phrase' && phraseCategoryId && (
-          <PhraseExercise
-            exercises={phraseCategories.find(c => c.id === phraseCategoryId)?.exercises ?? []}
-            scheme={currentScheme}
-            onComplete={handlePhraseComplete}
-            onBack={handlePhraseBack}
-          />
-        )}
-
-        {section === 'article' && !articleId && (
-          <ArticleHome onSelectArticle={handleSelectArticle} onBack={() => {}} />
-        )}
-
-        {section === 'article' && articleId && (() => {
-          const article = articles.find(a => a.id === articleId)
-          if (!article) return null
-          return (
-            <ArticlePractice
-              article={article}
-              scheme={currentScheme}
-              onComplete={handleArticleComplete}
-              onBack={handleArticleBack}
+        <main className={styles.main}>
+          {section === 'practice' && practiceScreen === 'home' && (
+            <Dashboard
+              streak={stats.streaks}
+              stats={stats}
+              onNavigate={handleDashboardNavigate}
             />
-          )
-        })()}
+          )}
 
-        {section === 'games' && !gameId && (
-          <GamesHome onSelectGame={handleSelectGame} onBack={() => {}} />
-        )}
+          {section === 'practice' && practiceScreen === 'exercise' && exerciseMode === 'article' && (
+            <ArticleTyping
+              scheme={currentScheme}
+              onBack={handleBack}
+            />
+          )}
 
-        {section === 'games' && gameId === 'timed' && (
-          <TimedChallenge
-            scheme={currentScheme}
-            onComplete={() => setGameId(null)}
-            onBack={handleGameBack}
-          />
-        )}
-      </main>
+          {section === 'practice' && practiceScreen === 'exercise' && exerciseMode !== 'article' && exercises.length > 0 && (
+            <Exercise
+              key={exerciseLabel}
+              exercises={exercises}
+              scheme={currentScheme}
+              onComplete={handleComplete}
+              onBack={handleBack}
+              maxLength={exerciseConfig.maxLength}
+              inputFilter={exerciseConfig.inputFilter}
+            />
+          )}
 
-      <NavBar tabs={TABS} activeTab={section} onTabChange={handleTabChange} />
+          {section === 'practice' && practiceScreen === 'scheme-select' && (
+            <SchemeSelect
+              schemes={schemes}
+              currentSchemeId={schemeId}
+              onSchemeChange={handleSchemeChange}
+              onBack={handleSchemeBack}
+            />
+          )}
+
+          {section === 'leaderboard' && (
+            <Leaderboard
+              stats={stats}
+              lessons={lessons}
+            />
+          )}
+
+          {section === 'shop' && (
+            <Profile
+              stats={stats}
+              darkMode={darkMode}
+              onToggleDark={toggleDarkMode}
+              schemes={schemes}
+              currentSchemeId={schemeId}
+              onSelectScheme={handleSelectScheme}
+              onResetProgress={resetProgress}
+            />
+          )}
+        </main>
+
+        <BottomNav
+          section={section}
+          onSectionChange={handleSectionChange}
+        />
+      </div>
     </div>
   )
 }

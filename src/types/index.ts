@@ -1,3 +1,8 @@
+export type Section = 'practice' | 'leaderboard' | 'shop'
+export type PracticeScreen = 'home' | 'exercise' | 'scheme-select'
+export type ExerciseMode = 'basic' | 'phrase' | 'article' | 'game'
+
+/** @deprecated Use Section + PracticeScreen instead */
 export type SectionId = 'basic' | 'phrase' | 'article' | 'games'
 
 /** A Shuangpin key mapping scheme */

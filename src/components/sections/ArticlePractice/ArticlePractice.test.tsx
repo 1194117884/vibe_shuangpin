@@ -17,7 +17,7 @@ describe('ArticlePractice', () => {
     expect(screen.getByText('你好吗？')).toBeInTheDocument()
   })
 
-  it('shows pinyin for the current exercise', () => {
+  it('shows the exercise character for the current exercise', () => {
     render(
       <ArticlePractice
         article={articles[0]!}
@@ -26,6 +26,6 @@ describe('ArticlePractice', () => {
         onBack={vi.fn()}
       />,
     )
-    expect(screen.getByText('ni hao ma')).toBeInTheDocument()
+    expect(screen.getByText('你好吗')).toBeInTheDocument()
   })
 })

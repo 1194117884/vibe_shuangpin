@@ -30,14 +30,14 @@ describe('Exercise', () => {
     vi.useRealTimers()
   })
 
-  it('displays the current prompt pinyin', () => {
-    render(<Exercise {...baseProps} />)
-    expect(screen.getByText('zhong')).toBeInTheDocument()
-  })
-
-  it('renders the character display', () => {
+  it('displays the current character', () => {
     render(<Exercise {...baseProps} />)
     expect(screen.getByText('中')).toBeInTheDocument()
+  })
+
+  it('shows a placeholder in the pinyin box', () => {
+    render(<Exercise {...baseProps} />)
+    expect(screen.getAllByText('?')).toHaveLength(2)
   })
 
   it('accepts typed input', () => {
@@ -51,8 +51,7 @@ describe('Exercise', () => {
     render(<Exercise {...baseProps} />)
     const input = screen.getByLabelText('输入双拼编码') as HTMLInputElement
     fireEvent.change(input, { target: { value: 'vs' } })
-    // Should advance to next exercise
-    expect(screen.getByText('guo')).toBeInTheDocument()
+    // Should advance to next exercise — next char '国' is shown in preview
     expect(screen.getByText('国')).toBeInTheDocument()
     // Input should be cleared
     expect(input.value).toBe('')
@@ -76,8 +75,8 @@ describe('Exercise', () => {
     const input = screen.getByLabelText('输入双拼编码') as HTMLInputElement
     expect(input.value).toBe('v')
     fireEvent.click(screen.getByLabelText('键 s'))
-    // Should auto-submit and advance
-    expect(screen.getByText('guo')).toBeInTheDocument()
+    // Should auto-submit and advance — next char '国' is shown in preview
+    expect(screen.getByText('国')).toBeInTheDocument()
     expect(input.value).toBe('')
   })
 
@@ -106,10 +105,10 @@ describe('Exercise', () => {
     expect(screen.getByLabelText('键 z')).toBeInTheDocument()
   })
 
-  it('calls onBack when back button is clicked', () => {
+  it('calls onBack when close button is clicked', () => {
     const onBack = vi.fn()
     render(<Exercise {...baseProps} onBack={onBack} />)
-    fireEvent.click(screen.getByRole('button', { name: '返回' }))
+    fireEvent.click(screen.getByLabelText('关闭'))
     expect(onBack).toHaveBeenCalledOnce()
   })
 
@@ -131,16 +130,5 @@ describe('Exercise', () => {
     // Should NOT auto-submit at 2 chars
     fireEvent.change(input, { target: { value: 'vs' } })
     expect(input.value).toBe('vs')
-  })
-
-  it('toggles pinyin display', () => {
-    render(<Exercise {...baseProps} />)
-    // Pinyin visible by default
-    expect(screen.getByText('zhong')).toBeInTheDocument()
-    // Toggle off
-    fireEvent.click(screen.getByLabelText('显示拼音'))
-    expect(screen.queryByText('zhong')).not.toBeInTheDocument()
-    // Char should still show
-    expect(screen.getByText('中')).toBeInTheDocument()
   })
 })

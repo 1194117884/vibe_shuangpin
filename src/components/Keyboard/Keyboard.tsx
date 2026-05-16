@@ -43,29 +43,15 @@ export function Keyboard({ highlightKeys, schemeLabels, onKeyPress }: KeyboardPr
               onClick={() => onKeyPress(k)}
               aria-label={`键 ${k}`}
             >
-              <span className={styles.keyUpper}>{k === ';' ? ';' : k.toUpperCase()}</span>
-              {k === ';' && !showInitial && !showFinal ? (
-                <span className={styles.keyLower}>;</span>
-              ) : (
-                <div className={styles.keyBody}>
-                  {showInitial ? (
-                    <span className={styles.keyInitial}>{initials.join(' ')}</span>
-                  ) : (
-                    <span className={styles.keyLower}>{k}</span>
-                  )}
-                  {showFinal && (
-                    <span className={styles.keyFinal}>{finals.join(' ')}</span>
-                  )}
-                </div>
-              )}
+              <span className={styles.keyUpper}>{k}</span>
+              <div className={styles.keyBody}>
+                <span className={styles.keyMapping}>
+                  {showFinal ? finals.join(' ') : showInitial ? initials.join(' ') : k}
+                </span>
+              </div>
             </button>
           )
         })}
-      </div>
-      <div className={styles.legend}>
-        <span className={styles.legendItem}>声母</span>
-        <span className={styles.legendItem}>韵母</span>
-        <span className={styles.legendItem}>提示</span>
       </div>
     </div>
   )

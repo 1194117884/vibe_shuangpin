@@ -29,15 +29,14 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
   } = useTyping(exercises)
 
   const { playCorrect, playIncorrect } = useSound()
-  const [showPinyin, setShowPinyin] = useState(true)
-  const [showHints, setShowHints] = useState(true)
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null)
-  const [transitioning, setTransitioning] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     inputRef.current?.focus()
   }, [currentIndex, feedback])
+
+  const totalProgress = exercises.length > 0 ? ((currentIndex) / exercises.length) * 100 : 0
 
   const expectedKeys = useMemo(
     () => currentExercise?.answer.split('') ?? [],
@@ -46,11 +45,10 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
 
   const highlightKeys = useMemo(() => {
     if (feedback === 'incorrect') return []
-    if (!showHints) return []
     if (input.length === 0) return []
     if (input.length === 1 && expectedKeys[1]) return [expectedKeys[1]]
     return []
-  }, [input, expectedKeys, feedback, showHints])
+  }, [input, expectedKeys, feedback])
 
   const schemeLabels = useMemo(() => {
     const labels: Record<string, { initials: string[]; finals: string[] }> = {}
@@ -70,8 +68,6 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
   const submitCorrect = useCallback(
     (val: string) => {
       submitAnswer(val)
-      setTransitioning(true)
-      setTimeout(() => setTransitioning(false), 500)
     },
     [submitAnswer],
   )
@@ -84,11 +80,11 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
       const ml = maxLength ?? 2
       const val = ml > 0 ? raw.slice(0, ml) : raw
       let shouldSubmit = false
-      let isCorrect = false
+      let isCorrectVal = false
 
       if ((ml > 0 ? val.length === ml : false) && currentExercise) {
         if (val.replace(/ /g, '') === currentExercise.answer.replace(/ /g, '')) {
-          isCorrect = true
+          isCorrectVal = true
           shouldSubmit = true
         } else {
           setInput(val)
@@ -104,7 +100,7 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
       }
 
       setInput(val)
-      if (shouldSubmit && isCorrect) {
+      if (shouldSubmit && isCorrectVal) {
         playCorrect()
         submitCorrect(val)
       }
@@ -157,13 +153,13 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
         inputRef.current?.focus()
       }, 500)
     }
-  }, [feedback, input, currentExercise, submitCorrect, playCorrect, playIncorrect])
+  }, [feedback, input, currentExercise, submitCorrect, playCorrect, playIncorrect, setInput])
 
   const handleInputKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key !== 'Enter') return
       const ml = maxLength ?? 2
-      if (ml > 0) return // auto-submit handles this
+      if (ml > 0) return
       submitAnswer_()
     },
     [maxLength, submitAnswer_],
@@ -196,83 +192,93 @@ export function Exercise({ exercises, scheme, onComplete, onBack, maxLength, inp
 
   if (!currentExercise) return null
 
-  const displayChar = currentExercise.char || currentExercise.prompt
+  const displayChar = currentExercise.char || ''
+  const nextExercise = exercises[currentIndex + 1]
+  const nextChar = nextExercise?.char || nextExercise?.prompt.split(' ')[0] || ''
+  const inputLabel = input || (maxLength !== 0 ? '' : '')
 
   return (
     <div className={styles.container}>
-      {/* Options bar */}
-      <div className={styles.optionsBar}>
-        <div className={styles.optionsLeft}>
-          <button className={styles.backButton} onClick={onBack} aria-label="返回">
-            ← 返回
-          </button>
+      {/* Desktop header: close + progress + hearts */}
+      <header className={styles.header}>
+        <button className={styles.closeBtn} onClick={onBack} aria-label="关闭">
+          <span className="material-symbols-outlined">close</span>
+        </button>
+        <div className={styles.progressArea}>
+          <div className={styles.progressTrack}>
+            <div className={styles.progressFill} style={{ width: `${Math.round(totalProgress)}%` }}>
+              <div className={styles.progressSparkle} />
+            </div>
+          </div>
         </div>
-        <div className={styles.optionsRight}>
-          <label className={styles.optionLabel}>
-            <input
-              type="checkbox"
-              checked={showPinyin}
-              onChange={() => setShowPinyin(p => !p)}
-              className={styles.checkbox}
-            />
-            显示拼音
-          </label>
-          <label className={styles.optionLabel}>
-            <input
-              type="checkbox"
-              checked={showHints}
-              onChange={() => setShowHints(h => !h)}
-              className={styles.checkbox}
-            />
-            显示提示
-          </label>
+        <div className={styles.heartsDisplay}>
+          <span className={`material-symbols-outlined ${styles.heartsIcon}`}>favorite</span>
+          5
         </div>
-      </div>
+      </header>
 
-      {/* Practice card */}
-      <div className={styles.practiceCard}>
-        {/* Decorative circles */}
-        <div className={styles.decoTL} />
-        <div className={styles.decoBR} />
-
-        {/* Ink-drop animation overlay */}
-        {transitioning && <div className={styles.inkDrop} />}
-
-        {/* Main content */}
-        <div className={styles.practiceContent}>
-          {showPinyin && <div className={styles.pinyin}>{currentExercise.prompt}</div>}
-          <div className={styles.char}>{displayChar}</div>
-          <div className={styles.inputRow}>
-            <input
-              ref={inputRef}
-              className={`${styles.input} ${feedback === 'incorrect' ? styles.inputError : ''}`}
-              type="text"
-              value={input}
-              onChange={handleInputChange}
-              onKeyDown={handleInputKeyDown}
-              autoComplete="off"
-              autoFocus
-              spellCheck={false}
-              maxLength={maxLength !== undefined && maxLength > 0 ? maxLength : undefined}
-              aria-label="输入双拼编码"
-            />
-            {(maxLength ?? 2) === 0 && input.length > 0 && (
-              <button className={styles.submitButton} onClick={submitAnswer_}>
-                确认
-              </button>
+      {/* Practice Canvas */}
+      <div className={styles.canvas}>
+        {/* Type Target */}
+        <div className={styles.typeTarget}>
+          <div className={styles.typeLabel}>基础练习</div>
+          <div className={styles.characters}>
+            <div className={styles.charBlock} key={currentIndex}>
+              <div className={styles.charMain}>{displayChar}</div>
+              <div
+                className={`${styles.pinyinBox} ${feedback === 'incorrect' ? styles.pinyinBoxError : ''}`}
+              >
+                {inputLabel || '?'}
+              </div>
+            </div>
+            {nextExercise && (
+              <div className={styles.charBlock}>
+                <div className={styles.charDimmed}>{nextChar}</div>
+                <div className={styles.pinyinBoxDimmed}>?</div>
+              </div>
             )}
           </div>
         </div>
+
+        {/* Keyboard */}
+        <div className={styles.keyboardContainer}>
+          <Keyboard
+            highlightKeys={highlightKeys}
+            schemeLabels={schemeLabels}
+            onKeyPress={handleKeyPress}
+          />
+        </div>
       </div>
 
-      {/* Keyboard */}
-      <div className={styles.keyboardWrapper}>
-        <Keyboard
-          highlightKeys={highlightKeys}
-          schemeLabels={schemeLabels}
-          onKeyPress={handleKeyPress}
-        />
-      </div>
+      {/* Hidden input for physical keyboard */}
+      <input
+        ref={inputRef}
+        className={styles.hiddenInput}
+        type="text"
+        value={input}
+        onChange={handleInputChange}
+        onKeyDown={handleInputKeyDown}
+        autoComplete="off"
+        autoFocus
+        spellCheck={false}
+        aria-label="输入双拼编码"
+      />
+
+      {/* Mascot overlay */}
+      {(feedback === 'correct' || feedback === 'incorrect') && (
+        <div className={styles.mascotOverlay}>
+          <div className={styles.speechBubble}>
+            <p className={feedback === 'correct' ? styles.speechText : styles.speechTextIncorrect}>
+              {feedback === 'correct' ? '太棒了！' : '再试一次！'}
+            </p>
+          </div>
+          <img
+            className={styles.mascotImage}
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEAerZEGWIbanF6E4zNyy_bY_FaiVMuOmNb_Iu-bKfo88CC5IUrgbBLjzbTHOSBe1J95bIYW9ktuPrCby65kV3kBhMFKF7hHaR1JwRnrZy_s8Ot2BWhD4HrB2zdz_Yva1qtupPbGZEBPoG1_vK4BciMcJXKRb8DeiRd7j2uU_SGzh0hVORMOjRwX__fE1oPEWnvgQiGe8S6RqO0mRgSTl2RnNs21ontXfjYq-bp7EOOT6NZekh00BAG2zXc1AdaFmIN28wBylidXcA"
+            alt="Mascot"
+          />
+        </div>
+      )}
     </div>
   )
 }

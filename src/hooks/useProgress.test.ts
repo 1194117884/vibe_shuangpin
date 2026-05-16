@@ -1,16 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useProgress } from './useProgress'
 
-function mockStorage() {
-  const store: Record<string, string> = {}
-  vi.spyOn(Storage.prototype, 'getItem').mockImplementation((k: string) => store[k] ?? null)
-  vi.spyOn(Storage.prototype, 'setItem').mockImplementation((k: string, v: string) => { store[k] = v })
-}
-
 describe('useProgress', () => {
   beforeEach(() => {
-    mockStorage()
+    localStorage.clear()
   })
 
   it('initializes with default stats', () => {

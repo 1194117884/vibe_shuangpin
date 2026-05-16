@@ -1,0 +1,449 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--container-max, 1024px);
+  margin: 0 auto;
+  padding: 20px;
+}
+
+@media (min-width: 768px) {
+  .dashboard {
+    padding: 48px 48px 0;
+  }
+}
+
+/* ── Desktop Header ── */
+
+.desktopHeader {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktopHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+}
+
+.greeting {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  line-height: 32px;
+  margin: 0;
+}
+
+.headerStats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.statPill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background: var(--color-surface-container);
+  border-radius: 9999px;
+  padding: 8px 16px;
+  border: 2px solid var(--color-surface-variant);
+}
+
+.statPill:first-child {
+  color: var(--color-primary-container);
+}
+
+.statPill:last-child {
+  color: var(--color-secondary);
+}
+
+.statIcon {
+  font-size: 20px;
+}
+
+/* ── Main Grid ── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.cardsColumn {
+  min-width: 0;
+}
+
+.sideColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Bento Grid ── */
+
+.bentoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .bentoGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Practice Card ── */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 24px;
+  border-radius: var(--radius-xl, 32px);
+  border-style: solid;
+  border-width: 2px;
+  border-bottom-width: 4px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  animation: cardFadeIn 0.4s ease-out both;
+}
+
+.card:nth-child(1) { animation-delay: 0s; }
+.card:nth-child(2) { animation-delay: 0.08s; }
+.card:nth-child(3) { animation-delay: 0.16s; }
+.card:nth-child(4) { animation-delay: 0.24s; }
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card:active {
+  transform: translateY(0px);
+  border-bottom-width: 2px;
+}
+
+.cardIconWrap {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 8px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardIcon {
+  font-size: 24px;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 28px;
+  margin: 0 0 8px;
+}
+
+.cardDesc {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  margin: 0 0 24px;
+  opacity: 0.9;
+}
+
+/* Card variants */
+
+.card_primary {
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  border-color: var(--color-on-primary-container);
+}
+
+.card_primary .cardIconWrap {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.card_primary .cardIcon {
+  color: var(--color-on-primary-container);
+}
+
+.card_secondary {
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+  border-color: var(--color-on-secondary-container);
+}
+
+.card_secondary .cardIconWrap {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.card_secondary .cardIcon {
+  color: var(--color-on-secondary-container);
+}
+
+.card_tertiary {
+  background: var(--color-tertiary-container);
+  color: var(--color-on-tertiary-container);
+  border-color: var(--color-on-tertiary-container);
+}
+
+.card_tertiary .cardIconWrap {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.card_tertiary .cardIcon {
+  color: var(--color-on-tertiary-container);
+}
+
+.card_surface {
+  background: var(--color-surface-variant);
+  color: var(--color-on-surface);
+  border-color: var(--color-outline);
+}
+
+.card_surface .cardIconWrap {
+  background: var(--color-surface-container-lowest);
+}
+
+.card_surface .cardIcon {
+  color: var(--color-outline);
+}
+
+.card_surface .cardDesc {
+  color: var(--color-text);
+}
+
+/* ── Progress Bars ── */
+
+.progressBar {
+  width: 100%;
+  margin-top: auto;
+}
+
+.progressTrack {
+  width: 100%;
+  background: rgba(30, 80, 0, 0.3);
+  border-radius: 9999px;
+  height: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(30, 80, 0, 0.2);
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-on-primary-container);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.progressTrackSecondary {
+  width: 100%;
+  background: rgba(0, 70, 102, 0.3);
+  border-radius: 9999px;
+  height: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(0, 70, 102, 0.2);
+}
+
+.progressFillSecondary {
+  height: 100%;
+  background: var(--color-on-secondary-container);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+/* ── Locked badge ── */
+
+.lockedBadge {
+  display: inline-block;
+  background: var(--color-on-tertiary-container);
+  color: var(--color-tertiary-container);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  margin-top: auto;
+}
+
+/* ── Play Button ── */
+
+.playBtn {
+  display: block;
+  width: 100%;
+  background: var(--color-secondary);
+  color: var(--color-on-secondary);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 8px 16px;
+  border-radius: var(--radius-lg, 24px);
+  text-align: center;
+  margin-top: auto;
+  border-bottom: 4px solid var(--color-secondary-hover);
+  transition: transform 0.1s, border-bottom-width 0.1s;
+}
+
+.playBtn:active {
+  border-bottom-width: 0;
+  transform: translateY(4px);
+}
+
+.card_surface:hover .playBtn {
+  background: var(--color-secondary-hover);
+}
+
+/* ── Level Widget ── */
+
+.levelWidget {
+  background: var(--color-surface);
+  border: 2px solid var(--color-outline-variant);
+  border-bottom-width: 4px;
+  border-radius: var(--radius-xl, 32px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.levelLabel {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-outline);
+  margin: 0 0 16px;
+}
+
+.levelCircle {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin-bottom: 16px;
+}
+
+.levelSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.levelTrack {
+  stroke: var(--color-surface-variant);
+}
+
+.levelProgress {
+  stroke: var(--color-primary-container);
+}
+
+.levelNumber {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.levelValue {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.levelUnit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-outline);
+}
+
+.levelXp {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ── Mascot Chat Bubble ── */
+
+.mascotSection {
+  position: relative;
+  margin-top: 8px;
+}
+
+.mascotBubble {
+  background: var(--color-surface-container-lowest);
+  border: 2px solid var(--color-outline-variant);
+  border-radius: var(--radius-xl, 32px);
+  border-bottom-right-radius: 0;
+  padding: 16px 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.mascotText {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--color-text);
+  font-style: italic;
+  margin: 0;
+}
+
+.mascotTail {
+  position: absolute;
+  bottom: -8px;
+  right: 32px;
+  width: 20px;
+  height: 20px;
+  background: var(--color-surface-container-lowest);
+  border-right: 2px solid var(--color-outline-variant);
+  border-bottom: 2px solid var(--color-outline-variant);
+  transform: rotate(45deg);
+  z-index: 0;
+}
+
+.mascotImageWrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-right: 8px;
+}
+
+.mascotImage {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}

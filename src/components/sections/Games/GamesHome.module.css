@@ -1,5 +1,5 @@
 .container {
-  padding: 24px 16px;
+  padding: 24px 20px;
   max-width: 500px;
   margin: 0 auto;
   width: 100%;
@@ -29,7 +29,7 @@
 
 .title {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .card {
@@ -55,7 +55,7 @@
 
 .cardTitle {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .cardDesc {

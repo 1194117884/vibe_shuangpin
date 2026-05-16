@@ -7,50 +7,146 @@
 }
 
 :root {
+  /* ── Design System: Playful Educational System (Light) ── */
+
+  /* Primary */
+  --color-primary: #2b6c00;
+  --color-primary-light: #58cc02;
+  --color-primary-container: #58cc02;
+  --color-primary-hover: #46a302;
+
+  /* Secondary */
+  --color-secondary: #006590;
+  --color-secondary-container: #1cb0f6;
+  --color-secondary-hover: #1899d6;
+  --color-on-secondary: #ffffff;
+
+  /* Tertiary */
+  --color-tertiary: #755b00;
+  --color-tertiary-container: #ffc800;
+
+  /* On-container text (text on colored container backgrounds) */
+  --color-on-primary-container: #1e5000;
+  --color-on-secondary-container: #004666;
+  --color-on-tertiary-container: #574300;
+
+  /* Error */
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+
+  /* Legacy action color aliases (used across components) */
   --color-green: #58cc02;
   --color-green-hover: #46a302;
   --color-blue: #1cb0f6;
   --color-blue-hover: #1899d6;
-  --color-orange: #ff9600;
-  --color-red: #ff4b4b;
-  --color-bg: #f0f0f0;
+  --color-red: #ba1a1a;
+  --color-orange: #ffc800;
+
+  /* Button text */
+  --color-btn-text: #ffffff;
+
+  /* Background & surfaces */
+  --color-bg: #faf9f8;
   --color-surface: #ffffff;
-  --color-text: #2b2b2b;
-  --color-text-secondary: #777777;
+  --color-surface-container-low: #f4f3f2;
+  --color-surface-container: #eeeeec;
+  --color-surface-container-high: #e9e8e7;
+
+  /* Text */
+  --color-text: #1a1c1b;
+  --color-text-secondary: #3f4a36;
+  --color-text-tertiary: #8a9a80;
+
+  /* Borders & outlines */
   --color-border: #e5e5e5;
+  --color-outline: #6f7b64;
+  --color-outline-variant: #becbb1;
+
+  /* Feedback */
   --color-correct: #58cc02;
-  --color-incorrect: #ff4b4b;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --color-incorrect: #ba1a1a;
+  --color-correct-bg: #eafbea;
+  --color-incorrect-bg: #ffeaea;
+
+  /* Component-specific */
   --color-keyboard-bg: #d7d7d7;
   --color-key-shadow: #b3b3b3;
   --color-highlight-shadow: #46a302;
-  --color-correct-bg: #eafbea;
-  --color-incorrect-bg: #ffeaea;
   --color-unlocked-bg: #f0fdf0;
   --color-chevron: #ccc;
-  --color-hover: #e5e5e5;
-  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --color-hover: #e9e8e7;
+  --color-surface-hover: #f0efee;
+
+  /* Radius — aligned with design spec */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* Layout */
+  --container-max: 1024px;
+
+  /* Shadows (transitional — design spec prefers tonal offsets) */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  /* Font */
+  --font-sans: 'Nunito Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 [data-theme="dark"] {
-  --color-bg: #1a1a2e;
-  --color-surface: #242540;
-  --color-text: #e8e8e8;
-  --color-text-secondary: #9e9eae;
-  --color-border: #3a3a5c;
-  --color-keyboard-bg: #1e1e38;
-  --color-key-shadow: #1a1a2e;
-  --color-highlight-shadow: #2d6e00;
-  --color-correct-bg: #1a3a1a;
-  --color-incorrect-bg: #3a1a1a;
-  --color-unlocked-bg: #1a2e1a;
-  --color-chevron: #5a5a7a;
-  --color-hover: #3a3a5c;
+  /* ── Design System: Midnight Academy (Dark) ── */
+
+  /* Background & surfaces — charcoal tonal layering */
+  --color-bg: #131313;
+  --color-surface: #1c1b1b;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container: #1d2021;
+  --color-surface-container-high: #282a2b;
+
+  /* Text */
+  --color-text: #e5e2e1;
+  --color-text-secondary: #a0a0a0;
+  --color-text-tertiary: #6d6d6d;
+
+  /* Borders */
+  --color-border: #252525;
+
+  /* Accent colors — brightened for dark mode contrast */
+  --color-green: #74e930;
+  --color-green-hover: #5ccf20;
+  --color-primary-light: #74e930;
+  --color-blue: #88ceff;
+  --color-blue-hover: #00a8ed;
+  --color-red: #ffb4ab;
+  --color-orange: #fec800;
+  --color-on-secondary: #00344d;
+
+  /* On-container text for dark mode */
+  --color-on-primary-container: #1e5000;
+  --color-on-secondary-container: #003954;
+  --color-on-tertiary-container: #574300;
+
+  /* Button text — dark for contrast on bright green */
+  --color-btn-text: #133800;
+
+  /* Feedback */
+  --color-correct: #74e930;
+  --color-incorrect: #ffb4ab;
+  --color-correct-bg: rgba(116, 233, 48, 0.15);
+  --color-incorrect-bg: rgba(255, 180, 171, 0.15);
+
+  /* Component-specific */
+  --color-keyboard-bg: #1c1b1b;
+  --color-key-shadow: #0e0e0e;
+  --color-highlight-shadow: #58cc02;
+  --color-unlocked-bg: rgba(116, 233, 48, 0.1);
+  --color-chevron: #5a5a5a;
+  --color-hover: #282a2b;
+  --color-surface-hover: #282a2b;
+
+  /* Shadows — deeper for dark mode */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
 }

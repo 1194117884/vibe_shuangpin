@@ -1,6 +1,5 @@
 .keyboard {
   width: 100%;
-  padding: 8px;
 }
 
 .grid {
@@ -14,22 +13,24 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   min-height: 78px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  padding: 6px 4px 4px;
-  box-shadow: var(--shadow-sm);
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  background: var(--color-surface-container-high);
+  border: 2px solid var(--color-outline-variant);
+  border-bottom-width: 4px;
+  border-radius: var(--radius-lg, 24px);
+  padding: 8px 4px 4px;
+  transition: transform 0.05s, border-bottom-width 0.05s, background 0.15s, box-shadow 0.05s;
   cursor: pointer;
   font-family: inherit;
-  color: inherit;
-  align-items: center;
+  color: var(--color-on-surface);
 }
 
-.key:hover {
-  background: var(--color-hover);
+.key:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
 }
 
 .key:focus-visible {
@@ -41,64 +42,54 @@
   position: absolute;
   top: 6px;
   left: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-outline);
   line-height: 1;
+  text-transform: uppercase;
 }
 
 .keyBody {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  margin-top: 10px;
+  gap: 1px;
+  margin-top: 4px;
 }
 
-.keyLower {
-  font-size: 14px;
+.keyLabel {
   font-weight: 500;
-  color: var(--color-text);
+  color: var(--color-on-surface);
   line-height: 1.2;
+  font-size: 13px;
 }
 
-.keyInitial {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text);
-  line-height: 1.2;
-}
-
-.keyFinal {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--color-text);
+.keyMapping {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-on-surface);
   line-height: 1.2;
   text-align: center;
   white-space: nowrap;
 }
 
 .highlighted {
-  background: var(--color-correct-bg);
-  border-color: var(--color-correct);
-  border-width: 2px;
-  box-shadow: 0 0 10px rgba(88, 204, 2, 0.25);
+  background: var(--color-green);
+  color: var(--color-btn-text);
+  border-color: var(--color-green-hover);
+  transform: scale(1.1);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.legend {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--color-border);
+.highlighted .keyUpper {
+  color: var(--color-btn-text);
+  opacity: 0.8;
 }
 
-.legendItem {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  user-select: none;
+.highlighted .keyLabel,
+.highlighted .keyMapping {
+  color: var(--color-btn-text);
 }
 
 /* ── Responsive ── */
@@ -110,8 +101,8 @@
 
   .key {
     min-height: 60px;
-    border-radius: 12px;
-    padding: 4px 3px 3px;
+    border-radius: var(--radius-md, 16px);
+    padding: 6px 3px 2px;
   }
 
   .keyUpper {
@@ -121,17 +112,15 @@
   }
 
   .keyBody {
-    margin-top: 6px;
-    gap: 1px;
+    margin-top: 2px;
   }
 
-  .keyLower,
-  .keyInitial {
-    font-size: 12px;
-  }
-
-  .keyFinal {
+  .keyMapping {
     font-size: 13px;
+  }
+
+  .keyLabel {
+    font-size: 11px;
   }
 }
 
@@ -142,8 +131,8 @@
 
   .key {
     min-height: 48px;
-    border-radius: 8px;
-    padding: 3px 2px 2px;
+    border-radius: var(--radius-sm, 8px);
+    padding: 4px 2px 1px;
   }
 
   .keyUpper {
@@ -152,27 +141,11 @@
     left: 4px;
   }
 
-  .keyBody {
-    margin-top: 4px;
-    gap: 0;
-  }
-
-  .keyLower,
-  .keyInitial {
-    font-size: 10px;
-  }
-
-  .keyFinal {
+  .keyMapping {
     font-size: 11px;
   }
 
-  .legend {
-    gap: 12px;
-    margin-top: 10px;
-    padding-top: 8px;
-  }
-
-  .legendItem {
-    font-size: 11px;
+  .keyLabel {
+    font-size: 9px;
   }
 }
